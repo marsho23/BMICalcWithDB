@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "BMI Calculator";
+}
+
+<div class="text-center">
+    <h1 class="display-4">BMI Calculator</h1>
+    <form id="bmiForm" method="post" asp-controller="BMI" asp-action="Calculate">
+        <label for="weight">Weight (kg): </label>
+        <input type="text" name="weight" id="weight" required />
+
+        <label for="height">Height (m): </label>
+        <input type="text" name="height" id="height" required />
+
+        <input type="submit" value="Calculate BMI" />
+    </form>
+    <p id="result"></p>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#bmiForm").on("submit",function(event){
+            event.preventDefault();
+
+            var weight = parseFloat($("#weight").val());
+            var height = parseFloat($("#height").val());
+
+            if(isNaN(weight) || isNaN(height)){
+                alert("weight and height must be valid numbers");
+                return;
+            }
+
+            if(height==0){
+                alert("Height can't be zero");
+                return;
+            }
+
+            $.ajax({
+                url: '/api/BMI/calculate',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ weight: weight, height: height }),
+                success: function (data) {
+                    $("#result").text("Your BMI is " + data)
+                }
+            })
+
+        })
+    })
+</script>
